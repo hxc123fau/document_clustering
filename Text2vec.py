@@ -12,7 +12,7 @@ from scipy.spatial.distance import cdist
 import matplotlib.pyplot as plt
 from  scipy.spatial.distance import euclidean
 import scipy
-from K_Mean import k_mean
+from Clustering_K_Mean import k_mean
 import gensim
 from nltk.corpus import stopwords
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
@@ -51,11 +51,12 @@ class text2vec():
 
 
     def _preprocess(self, doc_list):
+        # nlp = spacy.load('en_core_web_sm')
         nlp = spacy.load('en_core_web_lg')
         # lemmatisation word
         lemma_docs = [self._lemmatize_doc(nlp(doc)) for doc in doc_list]
         docs_dict = self._get_docs_dict(lemma_docs)
-        print('lemma_docs',len(lemma_docs),lemma_docs)
+        # print('lemma_docs',len(lemma_docs),lemma_docs)
         return nlp, lemma_docs, docs_dict
 
 
@@ -83,15 +84,15 @@ class text2vec():
 
         # print('self.docs',train_docs)
         # corpus = api.load('text8')
-        word2vec_model = Word2Vec(self.docs,size=100,min_count=1)
+        word2vec_model = Word2Vec(self.docs,size=300,min_count=1)
         # model.train(train_docs,total_examples = model.corpus_count,epochs = model.iter)
 
         word_vec_list=[]
         for i in range(len(self.docs_dict)):
             # print('self.docs_dict[i]',self.docs_dict[i])
             # load glove embedding vector
-            word_vec=self.nlp(self.docs_dict[i]).vector
-            # word_vec=word2vec_model[self.docs_dict[i]]
+            # word_vec=self.nlp(self.docs_dict[i]).vector
+            word_vec=word2vec_model[self.docs_dict[i]]
             # print('word_vec',word_vec.shape)
             word_vec_list.append(word_vec)
         all_word_vec=np.vstack(word_vec_list)
